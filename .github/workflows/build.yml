@@ -1,0 +1,36 @@
+name: Compilar Minimapa
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Descompactar minimapa-mod.zip
+        run: unzip -o minimapa-mod.zip
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.6
+
+      - name: Compilar mod
+        working-directory: minimapa-mod
+        run: gradle build --stacktrace
+
+      - name: Enviar .jar como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: Minimapa-Mod-jar
+          path: minimapa-mod/build/libs/*.jar
